@@ -1,0 +1,26 @@
+.status {
+  position: relative;
+  padding: 20px 30px;
+  border-radius: 0 0 16px 16px;
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  z-index: 10;
+  overflow: hidden;
+
+  &::after {
+    position: absolute;
+    content: '';
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #0002;
+    filter: blur(10px);
+  }
+}
+
+.counter {
+  margin: 0;
+  font-weight: 700;
+}
