@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { Canvas } from '../components'
+import { Canvas, Portal } from '../components'
 import s from './app.module.scss';
 import { useSelector } from 'react-redux';
 import { RootState } from './store';
@@ -23,6 +23,7 @@ export const App = () => {
         <p className={s.counter}>{hitsRightHero}</p>
       </div>
       <Canvas ref={ref} />
+      <Portal />
     </>
   )
 }

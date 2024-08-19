@@ -14,10 +14,10 @@ export class Hero {
   side: "left" | "right";
   radius: number;
   color: string;
+  speed: number = 1;
   highlighting: boolean = false;
 
   private incHitsCounter: (() => void) | null = null;
-  private speed: number = 1;
   private direction: number = 1;
 
   private cursor: Cursor;

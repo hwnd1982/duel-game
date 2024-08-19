@@ -1,11 +1,12 @@
-import { Hero, Cursor } from "../../entities";
+import { Hero, Cursor, GameStatus } from "../../entities";
+import { debounce } from "../../shared";
 
 export class GameConrtoller {
   heroies: Hero[] = [];
   cursor: Cursor | null = null;
   context: CanvasRenderingContext2D | null = null;
 
-  public size: {
+  size: {
     width: number;
     height: number;
   } = {
@@ -13,8 +14,7 @@ export class GameConrtoller {
     height: innerHeight,
   };
 
-  private status: "pause" | "play" | "stop" = "stop";
-  private animationID: number = 0;
+  status: GameStatus = "stop";
 
   setHitsCounters(incs: (() => void)[]) {
     this.heroies.forEach((hero, i) => hero.setIncHitsCounter(incs[i]));
@@ -31,8 +31,7 @@ export class GameConrtoller {
       new Hero({ side: "right", y: innerHeight - 110, radius: 50, color: "#8f6ed5", cursor: this.cursor }),
     ];
 
-    this.status = "pause";
-    this.draw();
+    this.renderer();
   }
 
   setSize(size: { width: number; height: number }) {
@@ -53,34 +52,26 @@ export class GameConrtoller {
     if (!this.context) return;
 
     this.draw();
-    this.heroies.forEach(hero => hero.step(this.context).draw(this.context));
+    this.heroies.forEach(hero => {
+      if (this.status === "play") {
+        hero.step(this.context);
+      }
+      hero.draw(this.context);
+    });
 
-    this.animationID = requestAnimationFrame(() => this.renderer());
+    requestAnimationFrame(() => this.renderer());
   }
 
-  resize = () => {
+  resize = debounce(() => {
     this.heroies.forEach(hero => hero.setX());
     this.setSize({ width: innerWidth, height: innerHeight });
-  };
+  }, 100);
 
   play() {
     this.status = "play";
-    this.renderer();
   }
 
   pause() {
     this.status = "pause";
-    cancelAnimationFrame(this.animationID);
-  }
-
-  switch() {
-    switch (this.status) {
-      case "pause":
-        this.play();
-        break;
-      case "play":
-        this.pause();
-        break;
-    }
   }
 }

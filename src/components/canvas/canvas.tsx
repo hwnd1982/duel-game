@@ -2,11 +2,13 @@ import React, { forwardRef, RefObject, useEffect, useState } from "react";
 import s from './canvas.module.scss';
 
 import { RootState } from "../../app";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { switchGame } from "../../entities";
 
 export type Ref = React.Ref<HTMLCanvasElement>;
 
 export const Canvas = forwardRef<HTMLCanvasElement & {onHitting: (e: CustomEvent) => void}, unknown>((_prors: unknown, ref:Ref) => {
+  const dispatch = useDispatch();
   const game = useSelector((state: RootState) => state.game);
   const [size, setSize] = useState(game.controller.size);
 
@@ -34,6 +36,6 @@ export const Canvas = forwardRef<HTMLCanvasElement & {onHitting: (e: CustomEvent
     height={size.height}
     className={s.canvas}
     ref={ref}
-    onClick={() => game.controller.switch()}
+    onClick={() => dispatch(switchGame())}
   />
 });
