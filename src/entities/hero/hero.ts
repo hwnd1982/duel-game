@@ -15,6 +15,8 @@ export class Hero {
   radius: number;
   color: string;
   speed: number = 1;
+  fireballRate: number = 1;
+  fireballColor: string;
   highlighting: boolean = false;
 
   private incHitsCounter: (() => void) | null = null;
@@ -28,6 +30,7 @@ export class Hero {
     this.radius = radius;
     this.color = color;
     this.cursor = cursor;
+    this.fireballColor = color;
     this.cursor.hero = this;
 
     this.setX();
@@ -46,6 +49,22 @@ export class Hero {
         this.x = innerWidth - this.radius * 2 - 10;
         break;
     }
+  }
+
+  setSpeed(value: number) {
+    this.speed = value;
+  }
+
+  setColor(value: string) {
+    this.color = value;
+  }
+
+  setFireballColor(value: string) {
+    this.fireballColor = value;
+  }
+
+  setFireballRate(value: number) {
+    this.fireballRate = value;
   }
 
   draw(context: CanvasRenderingContext2D | null) {
@@ -73,14 +92,14 @@ export class Hero {
   }
 
   crossY({ y, height }: Cursor) {
-    return y + height / 2 >= this.y + 10 && y - height / 2 <= this.y + 2 * this.radius - 10;
+    return y + height / 2 >= this.y + 10 && y - height / 2 <= this.y + 2 * this.radius - (this.speed + 5);
   }
 
   step(context: CanvasRenderingContext2D | null) {
     if (!context) return this;
 
     const top = this.y + this.direction <= 10;
-    const bottom = this.y + this.direction >= context.canvas.height - this.radius * 2 - 10;
+    const bottom = this.y + this.direction >= context.canvas.height - this.radius * 2 - (this.speed + 5);
 
     if (top || bottom || (this.crossX(this.cursor) && this.crossY(this.cursor))) {
       this.direction *= -1;

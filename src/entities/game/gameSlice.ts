@@ -1,4 +1,4 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { GameConrtoller } from "./game";
 import { Hero } from "../hero";
 
@@ -47,6 +47,18 @@ export const gameSlice = createSlice({
 
       state.settingsHero = hero;
     },
+    setHeroSpeed: (state, action: PayloadAction<number>) => {
+      state.settingsHero?.setSpeed(action.payload);
+    },
+    setHeroColor: (state, action: PayloadAction<string>) => {
+      state.settingsHero?.setColor(action.payload);
+    },
+    setFireballRate: (state, action: PayloadAction<number>) => {
+      state.settingsHero?.setFireballRate(action.payload);
+    },
+    setFireballColor: (state, action: PayloadAction<string>) => {
+      state.settingsHero?.setFireballColor(action.payload);
+    },
     closeSettings: state => {
       state.settingsHero = null;
       state.status = "play";
@@ -55,6 +67,15 @@ export const gameSlice = createSlice({
   },
 });
 
-export const { playGame, pauseGame, switchGame, closeSettings } = gameSlice.actions;
+export const {
+  playGame,
+  pauseGame,
+  switchGame,
+  closeSettings,
+  setHeroSpeed,
+  setHeroColor,
+  setFireballRate,
+  setFireballColor,
+} = gameSlice.actions;
 
 export default gameSlice.reducer;

@@ -17,12 +17,14 @@ export class Cursor {
   }
 
   init(context: CanvasRenderingContext2D) {
-    context.canvas?.addEventListener("mousemove", (e: MouseEvent) => {
+    document.addEventListener("mousemove", (e: MouseEvent) => {
+      const canvas = (e.target as HTMLElement).closest("canvas");
+
       this.y = e.y;
       this.x = e.x;
 
       this.heroies.forEach(hero => {
-        if (hero.crossX(this) && hero.crossY(this)) {
+        if (canvas && hero.crossX(this) && hero.crossY(this)) {
           hero.highlighting = true;
 
           switch (hero.side) {

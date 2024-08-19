@@ -1,0 +1,31 @@
+.row {
+  &:not(:last-child) {
+    margin-bottom: 16px;
+  }
+}
+
+.color {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.value {
+  display: flex;
+  align-items: center;
+  margin: 0;
+
+  &:not(:last-child) {
+    margin-bottom: 10px;
+  }
+
+  &>:not(:last-child) {
+    margin-right: 10px;
+  }
+}
+
+.input {
+  display: block;
+  width: 100%;
+}

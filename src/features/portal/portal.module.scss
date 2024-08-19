@@ -1,0 +1,52 @@
+.portal {
+  position: fixed;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 98;
+}
+
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: -1;
+  background-color: #fff5;
+  z-index: -1;
+}
+
+.modal {
+  position: relative;
+  padding: 30px;
+  border-radius: 20px;
+  background-color: #fff6;
+  max-width: 320px;
+  width: 100%;
+}
+
+.feildset {
+  &>:not(:last-child) {
+    margin-right: 10px;
+  }
+}
+
+.close {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  top: 10px;
+  right: 10px;
+  padding: 5px;
+  background-color: #fff0;
+  
+  &:focus {
+    outline: none;
+  }
+}
