@@ -19,7 +19,7 @@ export const HeroSpeedRange = () => {
 
   return (
     <div className={s.row}>
-      <p className={s.value}><span>Скорость:</span> {speed}</p>
+      <p className={s.value}><span>Скорость передвижения:</span><span>{speed}</span></p>
       <input className={s.input} type="range" min={1} max={10} value={speed} onChange={({target}) => setHSpeed(+target.value)} />
     </div>
   )

@@ -19,7 +19,7 @@ export const FireballRateRange = () => {
 
   return (
     <div className={s.row}>
-      <p className={s.value}><span>Скорость:</span> {fireballRate}</p>
+      <p className={s.value}><span>Частота стрельбы:</span><span>{fireballRate}</span></p>
       <input className={s.input} type="range" min={1} max={10} value={fireballRate} onChange={({target}) => setFRate(+target.value)} />
     </div>
   )

@@ -1,5 +1,6 @@
 import { useRef } from 'react'
-import { Canvas, Portal, StatusBar } from '../features'
+import { StatusBar } from '../features'
+import { Canvas, Portal } from '../widgets'
 
 export const App = () => {
   const ref = useRef(null);

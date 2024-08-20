@@ -23,6 +23,10 @@
   &>:not(:last-child) {
     margin-right: 10px;
   }
+
+  &>:last-child {
+    font-weight: 600;
+  }
 }
 
 .input {

@@ -1,39 +1,62 @@
 import { Cursor } from "../cursor";
+import { Fireball } from "../fireball";
+import { GameConrtoller } from "../game";
 
 export type HeroProps = {
   y: number;
-  radius: number;
+  radius?: number;
   color: string;
   side: "left" | "right";
-  cursor: Cursor;
 };
 
 export class Hero {
   x: number = 10;
   y: number;
   side: "left" | "right";
-  radius: number;
+  radius: number = 50;
   color: string;
   speed: number = 1;
   fireballRate: number = 1;
   fireballColor: string;
   highlighting: boolean = false;
+  recoveryDelay: number = 0;
 
-  private incHitsCounter: (() => void) | null = null;
+  incHitsCounter: (() => void) | null = null;
+
   private direction: number = 1;
+  private conrtoller: GameConrtoller;
+  private fireDelay: number | null = null;
 
-  private cursor: Cursor;
-
-  constructor({ side, y, radius, color, cursor }: HeroProps) {
+  constructor({ side, y, radius, color }: HeroProps, conrtoller: GameConrtoller) {
     this.y = y;
     this.side = side;
-    this.radius = radius;
     this.color = color;
-    this.cursor = cursor;
+    this.conrtoller = conrtoller;
     this.fireballColor = color;
-    this.cursor.hero = this;
+
+    if (radius) this.radius = radius;
+    this.conrtoller.cursor!.hero = this;
 
     this.setX();
+  }
+
+  startFire() {
+    const fire = () => {
+      this.conrtoller.fire(this);
+      if (this.fireDelay) clearTimeout(this.fireDelay);
+      this.fireDelay = null;
+    };
+
+    if (this.fireDelay) return;
+
+    this.fireDelay = setTimeout(fire, 1400 - 100 * this.fireballRate);
+  }
+
+  stopFire() {
+    if (!this.fireDelay) return;
+
+    clearTimeout(this.fireDelay);
+    this.fireDelay = null;
   }
 
   setIncHitsCounter(inc: () => void) {
@@ -67,46 +90,65 @@ export class Hero {
     this.fireballRate = value;
   }
 
-  draw(context: CanvasRenderingContext2D | null) {
-    if (!context) return;
-
-    context.fillStyle = this.color;
+  draw() {
+    this.conrtoller.context!.fillStyle = this.color;
     if (this.highlighting) {
-      context.strokeStyle = "#2394F2";
+      this.conrtoller.context!.strokeStyle = "#2394F2";
     } else {
-      context.strokeStyle = this.color;
+      this.conrtoller.context!.strokeStyle = this.color;
     }
 
-    context.beginPath();
-    context.lineWidth = 5;
-    context.moveTo(this.x + this.radius, this.y);
-    context.arc(this.x + this.radius, this.y + this.radius, this.radius, 0, 2 * Math.PI);
+    this.conrtoller.context!.beginPath();
+    this.conrtoller.context!.lineWidth = 5;
+    this.conrtoller.context!.moveTo(this.x + this.radius, this.y);
+    this.conrtoller.context!.arc(this.x + this.radius, this.y + this.radius, this.radius, 0, 2 * Math.PI);
 
-    context.stroke();
-    context.fill();
-    context.closePath();
+    this.conrtoller.context!.stroke();
+    this.conrtoller.context!.fill();
+    this.conrtoller.context!.closePath();
   }
 
-  crossX({ x, width }: Cursor) {
-    return x + width / 2 >= this.x && x - width * 1.5 <= this.x;
+  crossX({ x, width }: Cursor | Fireball) {
+    return x + width >= this.x + this.radius && x - width <= this.x + this.radius;
   }
 
-  crossY({ y, height }: Cursor) {
-    return y + height / 2 >= this.y + 10 && y - height / 2 <= this.y + 2 * this.radius - (this.speed + 5);
+  crossY({ y, height }: Cursor | Fireball) {
+    return (
+      y + height / 2 >= this.y + (this.speed + height / 2) &&
+      y - height / 2 <= this.y + 2 * this.radius - (this.speed + height / 2)
+    );
   }
 
-  step(context: CanvasRenderingContext2D | null) {
-    if (!context) return this;
+  isInWay(cursor: Cursor) {
+    return (
+      this.crossX(cursor) &&
+      ((this.direction === -1 && cursor.y + cursor.height / 2 <= this.y + (this.speed + cursor.height)) ||
+        (this.direction === 1 &&
+          cursor.y - cursor.height / 2 >= this.y + 2 * this.radius - (this.speed + cursor.height)))
+    );
+  }
 
+  step() {
     const top = this.y + this.direction <= 10;
-    const bottom = this.y + this.direction >= context.canvas.height - this.radius * 2 - (this.speed + 5);
+    const bottom =
+      this.y + this.direction >= this.conrtoller.context!.canvas.height - this.radius * 2 - (this.speed + 5);
 
-    if (top || bottom || (this.crossX(this.cursor) && this.crossY(this.cursor))) {
+    if (
+      top ||
+      bottom ||
+      (this.crossX(this.conrtoller.cursor!) &&
+        this.crossY(this.conrtoller.cursor!) &&
+        this.isInWay(this.conrtoller.cursor!))
+    ) {
       this.direction *= -1;
-      if (this.incHitsCounter) this.incHitsCounter();
     }
 
-    this.y += this.direction * this.speed;
+    if (this.recoveryDelay) {
+      this.recoveryDelay--;
+    } else {
+      this.y += this.direction * this.speed;
+      this.startFire();
+    }
 
     return this;
   }
